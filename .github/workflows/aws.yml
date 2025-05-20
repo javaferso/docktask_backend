@@ -56,3 +56,19 @@ jobs:
           EOF
 
       # Notificación opcional (Slack, Discord, etc) aquí si lo deseas
+      - name: Notify Discord (success)
+        if: success()
+        run: |
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d "{\"content\": \":white_check_mark: Deploy to EC2 succeeded on branch $GITHUB_REF by $GITHUB_ACTOR\"}" \
+               ${{ secrets.DISCORD_WEBHOOK_URL }}
+      
+      - name: Notify Discord (failure)
+        if: failure()
+        run: |
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d "{\"content\": \":x: Deploy to EC2 **FAILED** on branch $GITHUB_REF by $GITHUB_ACTOR\"}" \
+               ${{ secrets.DISCORD_WEBHOOK_URL }}
+
