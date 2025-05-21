@@ -40,7 +40,7 @@ jobs:
       # tests
       - name: Run backend tests
         run: |
-          PYTHONPATH=src pytest tests/
+          PYTHONPATH=. pytest tests/
           working-directory: ${{ github.workspace }}/docktask_backend
 
       - name: Setup SSH Key
