@@ -33,7 +33,7 @@ jobs:
       # tests
       - name: Run backend tests
         run: |
-          pytest tests/
+          PYTHONPATH=src pytest tests/
 
       - name: Setup SSH Key
         uses: webfactory/ssh-agent@v0.7.0
