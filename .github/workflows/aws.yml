@@ -29,11 +29,19 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          
+      - name: Show workspace structure
+        run: |
+          pwd
+          ls -l
+      - name: List subfolders
+        run: ls -l ${{ github.workspace }}
 
       # tests
       - name: Run backend tests
         run: |
-          PYTHONPATH=$(pwd)/src pytest tests/
+          PYTHONPATH=src pytest tests/
+          working-directory: ${{ github.workspace }}/docktask_backend
 
       - name: Setup SSH Key
         uses: webfactory/ssh-agent@v0.7.0
