@@ -3,7 +3,7 @@ from flask import Blueprint, request, jsonify, render_template
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from .models import Usuario, Mensaje
 from . import db, r
-from datetime import datetime
+from datetime import datetime, timezone
 
 main = Blueprint("main", __name__)
 
@@ -140,10 +140,10 @@ def mis_mensajes():
     return jsonify([
         {"id": m.id, "nombre": m.nombre, 
          "mensaje": m.mensaje, 
-         "created_at": m.created_at, 
-         "updated_at": m.updated_at,
+         "created_at": m.created_at.astimezone(timezone.utc).isoformat(), 
+         "updated_at": m.updated_at.astimezone(timezone.utc).isoformat(),
          "estado": m.estado,
-         "expiration_date": m.expiration_date.isoformat() if m.expiration_date else None
+         "expiration_date": m.expiration_date.astimezone(timezone.utc).isoformat() if m.expiration_date else None
          }
         for m in mensajes
     ])
@@ -167,7 +167,7 @@ def actualizar_mensaje(id):
             mensaje.expiration_date = datetime.fromisoformat(data["expiration_date"])
         except Exception as e:
             return jsonify({"error": f"Formato de fecha inválido: {str(e)}"}), 400
-    mensaje.updated_at = datetime.utcnow()
+    mensaje.updated_at = datetime.now(timezone.utc)
     mensaje.mensaje = data.get("mensaje", mensaje.mensaje)
     db.session.commit()
     return jsonify({"mensaje": "Mensaje actualizado"})
@@ -204,7 +204,7 @@ def duplicar_mensaje(id):
         usuario_id=mensaje.usuario_id,
         proyecto_id=mensaje.proyecto_id,
         estado=mensaje.estado,
-        expiration_date=mensaje.expiration_date
+        expiration_date=mensaje.expiration_date.astimezone(timezone.utc).isoformat() if mensaje.expiration_date else None
     )
     db.session.add(nuevo)
     db.session.commit()
