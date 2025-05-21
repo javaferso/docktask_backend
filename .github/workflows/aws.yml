@@ -40,8 +40,8 @@ jobs:
       # tests
       - name: Run backend tests
         run: |
+          echo "PYTHONPATH=."
           PYTHONPATH=. pytest tests/
-        working-directory: ${{ github.workspace }}/docktask_backend
 
       - name: Setup SSH Key
         uses: webfactory/ssh-agent@v0.7.0
